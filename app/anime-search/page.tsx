@@ -1,6 +1,6 @@
 'use client';
 
-import { fetchAnimeSearchList } from 'app/api/animeSearch';
+import { fetchAnimeSearchList } from 'app/anime-search/api/anilist';
 import { useInfiniteScroll } from './hooks/useInfiniteScroll';
 
 export default function AnimeSearchPage() {
