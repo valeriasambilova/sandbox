@@ -1,9 +1,9 @@
 'use client';
 
-import { fetchAnimeSearchList } from 'app/anime-search/api/anilist';
-import { useInfiniteScroll } from './hooks/useInfiniteScroll';
+import { fetchAnimeSearchList } from 'app/anime-collection/api/anilist';
+import { useInfiniteScroll } from '../hooks/useInfiniteScroll';
 
-export default function AnimeSearchPage() {
+export default function List() {
   const { data, loading, hasMore, observerRef } =
     useInfiniteScroll(fetchAnimeSearchList);
 
