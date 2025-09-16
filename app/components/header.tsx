@@ -11,9 +11,15 @@ const navItems = {
   },
 };
 
-export function Header() {
+interface Header {
+  className?: string;
+}
+
+export function Header({ className }: Header) {
   return (
-    <header className='sticky top-0 z-50  border-b-1 border-b-neutral-800 bg-white tracking-tight dark:border-b-neutral-500 dark:bg-neutral-900'>
+    <header
+      className={`${className} sticky top-0 z-50 border-b-1 border-b-neutral-800 tracking-tight dark:border-b-gray-500`}
+    >
       <nav className='mx-auto max-w-7xl' id='nav'>
         <div className='flex flex-row space-x-0 pr-10'>
           {Object.entries(navItems).map(([path, { name }]) => {

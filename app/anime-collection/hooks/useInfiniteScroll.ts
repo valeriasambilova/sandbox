@@ -15,7 +15,9 @@ export const useInfiniteScroll = (fetchData: Function) => {
     try {
       const result = await fetchData(pageNumber);
 
-      setData((prev) => [...prev, ...result.items]);
+      setData((prev) =>
+        pageNumber === 1 ? result.items : [...prev, ...result.items]
+      );
       setHasMore(result.hasMore);
     } catch (err) {
       console.error(err);
@@ -25,23 +27,25 @@ export const useInfiniteScroll = (fetchData: Function) => {
   };
 
   useEffect(() => {
-    loadPage(page);
-  }, [page]);
+    loadPage(1);
+  }, []);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting && hasMore && !loading) {
-          setPage((prev) => prev + 1);
+          const nextPage = page + 1;
+          loadPage(nextPage);
+          setPage(nextPage);
         }
       },
-      { threshold: 1.0 }
+      { threshold: 1.0, rootMargin: '0px 0px 200px 0px' }
     );
 
     if (observerRef.current) observer.observe(observerRef.current);
 
     return () => observer.disconnect();
-  }, [hasMore, loading]);
+  }, [hasMore, loading, page]);
 
   return { data, loading, hasMore, observerRef };
 };
