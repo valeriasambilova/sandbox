@@ -43,18 +43,21 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const bgColor = 'bg-neutral-500 dark:bg-neutral-900';
+
   return (
     <html
       lang='en'
       className={cx(
-        'bg-white text-black dark:bg-neutral-900 dark:text-white',
+        'text-black dark:text-white',
+        bgColor,
         GeistSans.variable,
         GeistMono.variable
       )}
     >
       <body className='antialiased'>
-        <Header />
-        <main className='mx-auto mt-6 flex max-w-7xl min-w-0 flex-auto flex-col px-4'>
+        <Header className={`${bgColor} text-sm`} />
+        <main className='mx-auto mt-6 max-w-7xl flex min-w-0 flex-auto flex-col px-4 text-sm'>
           {children}
         </main>
         <Footer className='mx-auto max-w-7xl px-4' />
