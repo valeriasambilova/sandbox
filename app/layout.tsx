@@ -56,7 +56,9 @@ export default function RootLayout({
       )}
     >
       <body className='antialiased'>
-        <Header className={`${bgColor} text-sm`} />
+        <Header
+          className={`bg-neutral-700 text-sm shadow-md dark:bg-neutral-950`}
+        />
         <main className='mx-auto mt-6 max-w-7xl flex min-w-0 flex-auto flex-col px-4 text-sm'>
           {children}
         </main>
