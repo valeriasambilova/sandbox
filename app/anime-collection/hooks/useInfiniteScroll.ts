@@ -78,3 +78,5 @@ export const useInfiniteScroll = (fetchData: Function, params: any = {}) => {
 
   return { data, loading, hasMore, observerRef };
 };
+
+// export const useInfiniteScrollTest = (getList:  Function, {})

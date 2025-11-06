@@ -1,8 +1,16 @@
-'use client';
-
 import axios from 'axios';
+import { GraphQLClient } from 'graphql-request';
+import { GetAnime } from './queries/anime';
 
 const ANILIST_API_URL = 'https://graphql.anilist.co';
+
+export const anilist = new GraphQLClient(ANILIST_API_URL);
+
+export async function getAnimeList(params?) {
+  const animeList = await anilist.request(GetAnime, params);
+
+  return animeList;
+}
 
 const query = `
   query ($page: Int = 1) {

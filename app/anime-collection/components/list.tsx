@@ -1,12 +1,14 @@
 'use client';
 
-import { fetchAnimeSearchList } from 'app/anime-collection/api/anilist';
+import { fetchAnimeSearchList, getAnimeList } from '../graphql/anilist';
 import { useInfiniteScroll } from '../hooks/useInfiniteScroll';
 import Card from './card';
 
 export default function List() {
   const { data, loading, hasMore, observerRef } =
     useInfiniteScroll(fetchAnimeSearchList);
+
+  // console.log(getAnimeList({ page: 1 }));
 
   return (
     <>

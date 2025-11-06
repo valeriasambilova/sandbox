@@ -18,6 +18,12 @@
     "plugins": [
       {
         "name": "next"
+      },
+      {
+        "name": "gql.tada/ts-plugin",
+        "schema": "https://graphql.anilist.co",
+        "tadaOutputLocation": "./app/anime-collection/graphql/env.d.ts",
+        "tadaIncludeIntrospection": true
       }
     ],
     "strictNullChecks": true
