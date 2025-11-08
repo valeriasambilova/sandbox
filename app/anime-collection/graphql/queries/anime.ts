@@ -3,16 +3,15 @@ import { graphql } from 'gql.tada';
 export const GetAnime = graphql(`
   query GetAnime(
     $page: Int = 1
-    # $genre: String
-    # $status: MediaStatus
+    $genre_in: [String]
+    $status: MediaStatus
     $sort: [MediaSort] = [START_DATE_DESC]
   ) {
     Page(page: $page) {
       pageInfo {
         hasNextPage
       }
-      # media(type: ANIME, genre_in: [$genre], status: $status, sort: $sort) {
-      media(type: ANIME, sort: $sort) {
+      media(type: ANIME, genre_in: $genre_in, status: $status, sort: $sort) {
         id
         coverImage {
           large

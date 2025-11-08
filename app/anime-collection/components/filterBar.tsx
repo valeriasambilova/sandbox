@@ -1,6 +1,20 @@
-import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react';
+'use client';
 
-export default function Example() {
+import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react';
+import { useSearchParams } from 'next/navigation';
+import { Filters } from '../graphql/cachedFilters';
+
+interface FilterBarProps {
+  filters: Filters;
+}
+
+export default function FilterBar({ filters }: FilterBarProps) {
+  const searchParams = useSearchParams();
+  const genre = searchParams.get('genre');
+  const status = searchParams.get('status');
+
+  console.log(filters);
+
   return (
     <Menu>
       <MenuButton>My account</MenuButton>

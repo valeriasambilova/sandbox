@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { GraphQLClient } from 'graphql-request';
 import { GetAnime } from './queries/anime';
 
@@ -6,63 +5,26 @@ const ANILIST_API_URL = 'https://graphql.anilist.co';
 
 export const anilist = new GraphQLClient(ANILIST_API_URL);
 
-export async function getAnimeList(params?) {
-  const animeList = await anilist.request(GetAnime, params);
+export async function fetchAnimeList(
+  page: number,
+  filterParams?: { genre?: string; status?: string; sort?: string }
+) {
+  const variables: any = { page };
 
-  return animeList;
-}
-
-const query = `
-  query ($page: Int = 1) {
-    Page(page: $page) {
-      pageInfo {
-        hasNextPage
-      }
-      media (
-        type: ANIME
-      ) {
-        id
-        coverImage {
-          large
-        }
-        title {
-          romaji
-          english
-        }
-        averageScore
-        description (
-          asHtml: false
-        )
-        format
-      }
-    }
+  if (filterParams?.genre) {
+    variables.genre_in = filterParams.genre.split(',');
   }
-`;
 
-export async function fetchAnimeSearchList(page: number) {
-  const variables = { page };
-  const {
-    data: {
-      data: {
-        Page: {
-          media: items,
-          pageInfo: { hasNextPage: hasMore },
-        },
-      },
-    },
-  } = await axios.post(
-    ANILIST_API_URL,
-    JSON.stringify({
-      query,
-      variables,
-    }),
-    {
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-      },
-    }
-  );
+  if (filterParams?.status) {
+    variables.status = filterParams.status;
+  }
 
-  return { items, hasMore };
+  variables.sort = [filterParams?.sort || 'START_DATE_DESC'];
+
+  const { Page } = await anilist.request(GetAnime, variables);
+
+  return {
+    items: Page?.media,
+    hasMore: Page?.pageInfo?.hasNextPage,
+  };
 }
