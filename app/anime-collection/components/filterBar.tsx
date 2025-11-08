@@ -1,18 +1,15 @@
 'use client';
 
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react';
-import { useSearchParams } from 'next/navigation';
 import { Filters } from '../graphql/cachedFilters';
 
 interface FilterBarProps {
   filters: Filters;
+  genre: string | string[] | undefined;
+  status: string | undefined;
 }
 
-export default function FilterBar({ filters }: FilterBarProps) {
-  const searchParams = useSearchParams();
-  const genre = searchParams.get('genre');
-  const status = searchParams.get('status');
-
+export default function FilterBar({ filters, genre, status }: FilterBarProps) {
   console.log(filters);
 
   return (

@@ -3,13 +3,9 @@
 import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/react';
 import { SORT_OPTIONS } from '../graphql/sortOptions';
 import { useUrlParams } from '../hooks/useUrlParams';
-import { useSearchParams } from 'next/navigation';
 
-export default function SortBar() {
-  const searchParams = useSearchParams();
+export default function SortBar({ sort = 'START_DATE_DESC' }) {
   const { updateParam } = useUrlParams();
-
-  const sort = searchParams.get('sort') ?? 'START_DATE_DESC';
 
   return (
     <Menu>
