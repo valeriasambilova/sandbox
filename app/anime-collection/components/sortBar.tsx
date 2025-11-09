@@ -1,10 +1,14 @@
 'use client';
 
 import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/react';
-import { SORT_OPTIONS } from '../graphql/sortOptions';
+import { DEFAULT_SORT, SORT_OPTIONS } from '../graphql/sortOptions';
 import { useUrlParams } from '../hooks/useUrlParams';
 
-export default function SortBar({ sort = 'START_DATE_DESC' }) {
+export default function SortBar({
+  sort = DEFAULT_SORT,
+}: {
+  sort: string | string[] | undefined;
+}) {
   const { updateParam } = useUrlParams();
 
   return (

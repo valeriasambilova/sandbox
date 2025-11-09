@@ -14,3 +14,5 @@ export const SORT_OPTIONS = [
 ] as const;
 
 export type SortOption = (typeof SORT_OPTIONS)[number]['name'];
+
+export const DEFAULT_SORT = 'POPULARITY_DESC';

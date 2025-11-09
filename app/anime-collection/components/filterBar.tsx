@@ -6,7 +6,7 @@ import { Filters } from '../graphql/cachedFilters';
 interface FilterBarProps {
   filters: Filters;
   genre: string | string[] | undefined;
-  status: string | undefined;
+  status: string | string[] | undefined;
 }
 
 export default function FilterBar({ filters, genre, status }: FilterBarProps) {

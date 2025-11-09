@@ -2,46 +2,42 @@
 
 import { useEffect, useRef, useState } from 'react';
 
-// TODO: proper type for params
-export const useInfiniteScroll = (fetchData: Function, params: any = {}) => {
-  const [data, setData] = useState<any[]>([]);
-  const [page, setPage] = useState(1);
+type PageResult<T> = {
+  items: T[];
+  hasMore: boolean;
+};
+
+export const useInfiniteScroll = <T>(fetchData, params) => {
+  const [data, setData] = useState<T[]>([]);
   const [loading, setLoading] = useState(true);
   const [hasMore, setHasMore] = useState(true);
 
-  // setting variable to prevent StrictMode useEffect double run
-  const initialLoadRef = useRef(false);
-  const observerRef = useRef<HTMLDivElement>(null);
-  const requestIdRef = useRef(0);
   const pageRef = useRef(1);
-  const loadingRef = useRef(true);
-  const hasMoreRef = useRef(true);
+  const requestIdRef = useRef(0);
+  const initialLoadRef = useRef(true); // to prevent StrictMode double run
+  const observerRef = useRef<HTMLDivElement>(null);
+  const previousKeyRef = useRef<string>(''); // stable key for params
 
-  useEffect(() => {
-    pageRef.current = page;
-  }, [page]);
-  useEffect(() => {
-    loadingRef.current = loading;
-  }, [loading]);
-  useEffect(() => {
-    hasMoreRef.current = hasMore;
-  }, [hasMore]);
+  const paramsKey = JSON.stringify(params);
+  const paramsChanged = paramsKey !== previousKeyRef.current;
 
-  const loadPage = async (pageNumber: number) => {
+  const loadPage = async (pageNumber: number, reset = false) => {
     const currentRequestId = ++requestIdRef.current;
-    setLoading(true);
+
+    if (!reset) setLoading(true);
 
     try {
-      const result = await fetchData(pageNumber);
+      const result = await fetchData(pageNumber, params);
 
-      if (currentRequestId !== requestIdRef.current) return;
+      if (currentRequestId !== requestIdRef.current) return; // cancelled
 
-      setData((prev) =>
-        pageNumber === 1 ? result.items : [...prev, ...result.items]
+      setData((prevData) =>
+        reset ? result.items : [...prevData, ...result.items]
       );
       setHasMore(result.hasMore);
-    } catch (err) {
-      console.error(err);
+      if (!reset) pageRef.current = pageNumber + 1;
+    } catch (error) {
+      console.log(error);
     } finally {
       if (currentRequestId === requestIdRef.current) setLoading(false);
     }
@@ -49,34 +45,44 @@ export const useInfiniteScroll = (fetchData: Function, params: any = {}) => {
 
   // initial load
   useEffect(() => {
-    // checking if it is the first call to prevent StrictMode useEffect double run
-    if (initialLoadRef.current) return;
-    initialLoadRef.current = true;
+    if (initialLoadRef.current) {
+      initialLoadRef.current = false;
+      loadPage(1, true);
+    }
+  });
 
-    loadPage(1);
-  }, []);
+  // reset on param changes
+  useEffect(() => {
+    if (!paramsChanged) return;
 
-  // observer - uses refs to read latest state to avoid recreation on every page/loading change
+    pageRef.current = 1;
+    setData([]);
+    setHasMore(true);
+    previousKeyRef.current = paramsKey;
+
+    loadPage(1, true);
+  }, [paramsKey, paramsChanged]);
+
+  // infinite scroll observer
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting && hasMoreRef.current && !loadingRef.current) {
-          const nextPage = pageRef.current + 1;
-          setPage(nextPage);
-          loadPage(nextPage);
+        if (
+          entry.isIntersecting &&
+          hasMore &&
+          !loading &&
+          requestIdRef.current === 0
+        ) {
+          loadPage(pageRef.current);
         }
       },
-      { threshold: 1.0, rootMargin: '0px 0px 300px 0px' }
+      { threshold: 1, rootMargin: '0px 0px 400px 0px' }
     );
 
-    if (observerRef.current) {
-      observer.observe(observerRef.current);
-    }
+    if (observerRef.current) observer.observe(observerRef.current);
 
     return () => observer.disconnect();
-  }, []);
+  }, [hasMore, loading]);
 
   return { data, loading, hasMore, observerRef };
 };
-
-// export const useInfiniteScrollTest = (getList:  Function, {})

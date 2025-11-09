@@ -8,15 +8,22 @@ export const metadata = {
   description: 'Browse & Filter Anime from AniList.',
 };
 
-export default async function Page({ searchParams }) {
-  const { genre, status, sort } = searchParams;
+export default async function Page({
+  searchParams,
+}: {
+  searchParams: Record<string, string | string[] | undefined>;
+}) {
   const filters = await getFilters();
 
   return (
     <>
-      <FilterBar filters={filters} genre={genre} status={status} />
-      <SortBar sort={sort} />
-      <List />
+      <FilterBar
+        filters={filters}
+        genre={searchParams.genre}
+        status={searchParams.status}
+      />
+      <SortBar sort={searchParams.sort} />
+      <List searchParams={searchParams} />
     </>
   );
 }

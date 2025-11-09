@@ -7,7 +7,7 @@ export const anilist = new GraphQLClient(ANILIST_API_URL);
 
 export async function fetchAnimeList(
   page: number,
-  filterParams?: { genre?: string; status?: string; sort?: string }
+  filterParams: { genre?: string; status?: string; sort?: string }
 ) {
   const variables: any = { page };
 
