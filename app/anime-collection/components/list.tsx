@@ -22,7 +22,7 @@ export default function List({
           <Card item={item} key={index} />
         ))}
       </div>
-      <div ref={observerRef} />
+      {data.length > 0 && !loading && hasMore && <div ref={observerRef} />}
     </>
   );
 }

@@ -2,78 +2,77 @@
 
 import { useEffect, useRef, useState } from 'react';
 
-type PageResult<T> = {
-  items: T[];
-  hasMore: boolean;
-};
+type PageResult = { items: any[]; hasMore: boolean };
 
-export const useInfiniteScroll = <T>(fetchData, params) => {
-  const [data, setData] = useState<T[]>([]);
+export const useInfiniteScroll = (fetchData, params) => {
+  const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [hasMore, setHasMore] = useState(true);
+  const [loadedPages, setLoadedPages] = useState<Set<number>>(new Set());
 
-  const pageRef = useRef(1);
   const requestIdRef = useRef(0);
-  const initialLoadRef = useRef(true); // to prevent StrictMode double run
   const observerRef = useRef<HTMLDivElement>(null);
-  const previousKeyRef = useRef<string>(''); // stable key for params
+  const cacheRef = useRef<Map<string, Promise<PageResult>>>(new Map());
 
   const paramsKey = JSON.stringify(params);
-  const paramsChanged = paramsKey !== previousKeyRef.current;
 
   const loadPage = async (pageNumber: number, reset = false) => {
     const currentRequestId = ++requestIdRef.current;
 
     if (!reset) setLoading(true);
 
-    try {
-      const result = await fetchData(pageNumber, params);
+    const cacheKey = `${pageNumber}|${paramsKey}`;
 
-      if (currentRequestId !== requestIdRef.current) return; // cancelled
+    // get or create the promise
+    let promise: Promise<PageResult> =
+      cacheRef.current.get(cacheKey) ??
+      (async () => {
+        try {
+          const result = await fetchData(pageNumber, params);
+          return result;
+        } finally {
+          cacheRef.current.delete(cacheKey);
+        }
+      })();
 
-      setData((prevData) =>
-        reset ? result.items : [...prevData, ...result.items]
-      );
-      setHasMore(result.hasMore);
-      if (!reset) pageRef.current = pageNumber + 1;
-    } catch (error) {
-      console.log(error);
-    } finally {
-      if (currentRequestId === requestIdRef.current) setLoading(false);
+    // store it if it was newly created
+    if (!cacheRef.current.has(cacheKey)) {
+      cacheRef.current.set(cacheKey, promise);
     }
+
+    let result: PageResult;
+    try {
+      result = await promise;
+    } catch (err) {
+      console.error('Fetch error:', err);
+      if (currentRequestId === requestIdRef.current) setLoading(false);
+      return;
+    }
+
+    if (currentRequestId !== requestIdRef.current) return;
+
+    setData((prev) => (reset ? result.items : [...prev, ...result.items]));
+    setHasMore(result.hasMore);
+    setLoadedPages((prev) => new Set(prev).add(pageNumber));
+    setLoading(false);
   };
 
-  // initial load
+  // reset on params change
   useEffect(() => {
-    if (initialLoadRef.current) {
-      initialLoadRef.current = false;
-      loadPage(1, true);
-    }
-  });
-
-  // reset on param changes
-  useEffect(() => {
-    if (!paramsChanged) return;
-
-    pageRef.current = 1;
     setData([]);
     setHasMore(true);
-    previousKeyRef.current = paramsKey;
-
+    setLoadedPages(new Set());
     loadPage(1, true);
-  }, [paramsKey, paramsChanged]);
+  }, [paramsKey]);
 
-  // infinite scroll observer
+  // infinite scroll observer: load next page when sentinel enters viewport
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (
-          entry.isIntersecting &&
-          hasMore &&
-          !loading &&
-          requestIdRef.current === 0
-        ) {
-          loadPage(pageRef.current);
+        if (entry.isIntersecting && hasMore && !loading && data.length > 0) {
+          // calc next page from loadedPages to avoid race conditions
+          const nextPage = Math.max(...Array.from(loadedPages)) + 1;
+          loadPage(nextPage);
         }
       },
       { threshold: 1, rootMargin: '0px 0px 400px 0px' }
@@ -82,7 +81,7 @@ export const useInfiniteScroll = <T>(fetchData, params) => {
     if (observerRef.current) observer.observe(observerRef.current);
 
     return () => observer.disconnect();
-  }, [hasMore, loading]);
+  }, [hasMore, loading, data.length, loadedPages]);
 
   return { data, loading, hasMore, observerRef };
 };
