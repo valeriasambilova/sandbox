@@ -5,7 +5,7 @@ import { DEFAULT_SORT, SORT_OPTIONS } from '../graphql/sortOptions';
 import { useUrlParams } from '../hooks/useUrlParams';
 
 export default function SortBar({
-  sort = DEFAULT_SORT,
+  sort,
 }: {
   sort: string | string[] | undefined;
 }) {

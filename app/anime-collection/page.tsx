@@ -2,6 +2,7 @@ import List from './components/list';
 import FilterBar from './components/filterBar';
 import SortBar from './components/sortBar';
 import { getFilters } from './graphql/cachedFilters';
+import { DEFAULT_SORT } from './graphql/sortOptions';
 
 export const metadata = {
   title: 'Anime Collection',
@@ -22,7 +23,7 @@ export default async function Page({
         genre={searchParams.genre}
         status={searchParams.status}
       />
-      <SortBar sort={searchParams.sort} />
+      <SortBar sort={searchParams.sort ?? DEFAULT_SORT} />
       <List searchParams={searchParams} />
     </>
   );

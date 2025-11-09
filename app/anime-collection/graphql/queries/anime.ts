@@ -5,7 +5,7 @@ export const GetAnime = graphql(`
     $page: Int = 1
     $genre_in: [String]
     $status: MediaStatus
-    $sort: [MediaSort] = [START_DATE_DESC]
+    $sort: [MediaSort]
   ) {
     Page(page: $page) {
       pageInfo {
