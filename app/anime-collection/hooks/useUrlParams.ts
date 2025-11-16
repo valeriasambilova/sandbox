@@ -12,6 +12,8 @@ export const useUrlParams = () => {
     pushParams(params);
   };
 
+  const updateArrayParam = (key: string, value: string | string[]) => {};
+
   const deleteParam = (key: string) => {
     const params = new URLSearchParams(searchParams.toString());
 

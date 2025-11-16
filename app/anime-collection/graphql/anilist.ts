@@ -13,7 +13,7 @@ export async function fetchAnimeList(
   const variables: any = { page };
 
   if (filterParams?.genre) {
-    variables.genre_in = filterParams.genre.split(',');
+    variables.genre = filterParams.genre;
   }
 
   if (filterParams?.status) {

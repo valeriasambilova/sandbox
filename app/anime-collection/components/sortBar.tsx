@@ -14,7 +14,7 @@ export default function SortBar({
   return (
     <Menu>
       <MenuButton>
-        {SORT_OPTIONS.find((item) => item.name === sort)?.label}
+        Sort By: {SORT_OPTIONS.find((item) => item.name === sort)?.label}
       </MenuButton>
       <MenuItems anchor='bottom' modal={false}>
         {SORT_OPTIONS.map((item) => {
