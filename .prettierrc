@@ -1,0 +1,6 @@
+{
+  "tailwindConfig": "tailwind.config.js",
+  "tailwindStylesheet": "./app/global.css",
+  "plugins": ["prettier-plugin-tailwindcss"],
+  "singleQuote": true
+}

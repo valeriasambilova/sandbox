@@ -14,43 +14,47 @@ export default function Card({ item }) {
   };
 
   return (
-    <div className='flex overflow-hidden rounded-lg bg-neutral-300 px-4 py-6 dark:bg-neutral-800'>
-      <div className='card-image max-w-45 max-h-65 shrink-0 overflow-hidden rounded-lg'>
+    <div className="flex overflow-hidden rounded-lg bg-neutral-300 px-4 py-6 dark:bg-neutral-800">
+      <div className="card-image max-h-65 max-w-45 shrink-0 overflow-hidden rounded-lg">
         <img
-          className='aspect-9/13 h-full w-full object-cover'
+          className="aspect-9/13 h-full w-full object-cover"
           src={item.coverImage.large}
           alt={`Cover Image of ${englishTitle || romajiTitle}`}
-          loading='lazy'
+          loading="lazy"
         />
       </div>
-      <div className='card-info pl-4 flex flex-col'>
-        {/* title */}
-        <div className='mb-2 text-m'>
-          <div className='text-base'>{englishTitle || romajiTitle}</div>
-          {showRomaji && (
-            <div className='text-xs text-neutral-500'>{romajiTitle}</div>
-          )}
-        </div>
-        {/* genres */}
-        <div
-          className={`mb-2 text-xs text-neutral-400 ${
-            !!genresLength(item.genres) ? 'visible' : ''
-          }`}
-        >
-          <div>{(item.genres ?? []).join(' • ')}</div>
-          <div>
-            {[item.format, item.seasonYear, STATUS_LABELS[item.status]]
-              .filter(Boolean)
-              .join(' • ')}
+      <div className="card-info flex flex-col pl-4">
+        <div>
+          {/* title */}
+          <div className="text-m mb-2">
+            <div className="text-base">{englishTitle || romajiTitle}</div>
+            {showRomaji && (
+              <div className="text-xs text-neutral-500">{romajiTitle}</div>
+            )}
+          </div>
+          {/* genres */}
+          <div
+            className={`mb-2 text-xs text-neutral-400 ${
+              !!genresLength(item.genres) ? 'visible' : ''
+            }`}
+          >
+            <div>{(item.genres ?? []).join(' • ')}</div>
+            <div>
+              {[item.format, item.seasonYear, STATUS_LABELS[item.status]]
+                .filter(Boolean)
+                .join(' • ')}
+            </div>
           </div>
         </div>
         {/* description */}
-        <div className='h-full'>
+        <div className="h-full">
           <p
-            className='leading-tight line-clamp-7 text-neutral-300'
+            className="scrollbar leading-tight text-neutral-300 hover:h-full lg:line-clamp-7 lg:hover:overflow-y-auto lg:hover:pr-1"
             dangerouslySetInnerHTML={{
               __html: DOMPurify.sanitize(item.description),
             }}
+            onMouseEnter={(e) => (e.currentTarget.scrollTop = 0)}
+            onMouseLeave={(e) => (e.currentTarget.scrollTop = 0)}
           />
         </div>
       </div>

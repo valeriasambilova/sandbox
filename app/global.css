@@ -34,8 +34,30 @@ html {
   overflow-y: scroll;
 }
 
-.scrollbar-thin {
-  scrollbar-width: thin;
+@layer utilities {
+  .scrollbar {
+    &::-webkit-scrollbar {
+      @apply h-1.5 w-1.5;
+    }
+
+    &::-webkit-scrollbar-button {
+      @apply hidden;
+    }
+
+    &::-webkit-scrollbar-track {
+      @apply bg-transparent;
+    }
+
+    /* Light mode thumb */
+    &::-webkit-scrollbar-thumb {
+      @apply rounded-full bg-neutral-700;
+    }
+
+    /* Hover state */
+    &::-webkit-scrollbar-thumb:hover {
+      @apply bg-neutral-500;
+    }
+  }
 }
 
 pre::-webkit-scrollbar {
