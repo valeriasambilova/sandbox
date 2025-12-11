@@ -5,7 +5,7 @@ import { DEFAULT_SORT, SORT_OPTIONS } from '../graphql/sortOptions';
 import { useUrlParams } from '../hooks/useUrlParams';
 
 export default function SortBar({
-  sort,
+  sort = DEFAULT_SORT,
 }: {
   sort: string | string[] | undefined;
 }) {
@@ -16,12 +16,12 @@ export default function SortBar({
       <MenuButton>
         Sort By: {SORT_OPTIONS.find((item) => item.name === sort)?.label}
       </MenuButton>
-      <MenuItems anchor='bottom' modal={false}>
+      <MenuItems anchor="bottom" modal={false}>
         {SORT_OPTIONS.map((item) => {
           return (
             <MenuItem key={item.name}>
               <button
-                className='block'
+                className="block"
                 onClick={() => updateParam('sort', item.name)}
               >
                 {item.label}, {item.description}

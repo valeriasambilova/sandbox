@@ -2,9 +2,10 @@ import List from './components/list';
 import FilterBar from './components/filterBar';
 import SortBar from './components/sortBar';
 import { getFilters } from './graphql/cachedFilters';
-import { DEFAULT_SORT } from './graphql/sortOptions';
+import type { Metadata } from 'next';
+import { Suspense } from 'react';
 
-export const metadata = {
+export const metadata: Metadata = {
   title: 'Anime Collection',
   description: 'Browse & Filter Anime from AniList.',
 };
@@ -18,12 +19,14 @@ export default async function Page({
 
   return (
     <>
-      <FilterBar
-        filters={filters}
-        genre={searchParams.genre}
-        status={searchParams.status}
-      />
-      <SortBar sort={searchParams.sort ?? DEFAULT_SORT} />
+      <Suspense fallback={<div></div>}>
+        <FilterBar
+          filters={filters}
+          genre={searchParams.genre}
+          status={searchParams.status}
+        />
+        <SortBar sort={searchParams.sort} />
+      </Suspense>
       <List searchParams={searchParams} />
     </>
   );
