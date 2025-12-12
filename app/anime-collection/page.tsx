@@ -16,18 +16,19 @@ export default async function Page({
   searchParams: Record<string, string | string[] | undefined>;
 }) {
   const filters = await getFilters();
+  const resolvedSearchParams = await searchParams;
 
   return (
     <>
       <Suspense fallback={<div></div>}>
         <FilterBar
           filters={filters}
-          genre={searchParams.genre}
-          status={searchParams.status}
+          genre={resolvedSearchParams.genre}
+          status={resolvedSearchParams.status}
         />
-        <SortBar sort={searchParams.sort} />
+        <SortBar sort={resolvedSearchParams.sort} />
       </Suspense>
-      <List searchParams={searchParams} />
+      <List searchParams={resolvedSearchParams} />
     </>
   );
 }
