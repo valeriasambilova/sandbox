@@ -4,18 +4,32 @@ export const useUrlParams = () => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const createNewParams = () => new URLSearchParams(searchParams.toString());
 
   const updateParam = (key: string, value: string) => {
-    const params = new URLSearchParams(searchParams.toString());
+    const params = createNewParams();
 
     params.set(key, value);
     pushParams(params);
   };
 
-  const updateArrayParam = (key: string, value: string | string[]) => {};
+  const updateArrayParam = (key: string, values: (string | undefined)[]) => {
+    const params = createNewParams();
+
+    params.delete(key);
+    const valuesArray = Array.isArray(values)
+      ? values
+      : [values].filter(Boolean);
+    valuesArray.forEach((value) => {
+      if (value) {
+        params.append(key, value);
+      }
+    });
+    pushParams(params);
+  };
 
   const deleteParam = (key: string) => {
-    const params = new URLSearchParams(searchParams.toString());
+    const params = createNewParams();
 
     params.delete(key);
     pushParams(params);
@@ -27,5 +41,5 @@ export const useUrlParams = () => {
     router.push(params ? `${pathname}?${paramsString}` : pathname);
   };
 
-  return { updateParam, deleteParam };
+  return { updateParam, updateArrayParam, deleteParam };
 };

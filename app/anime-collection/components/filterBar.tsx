@@ -1,15 +1,16 @@
 'use client';
 
-import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react';
 import { Filters } from '../graphql/cachedFilters';
 import { useUrlParams } from '../hooks/useUrlParams';
 import {
+  Button,
   Listbox,
   ListboxButton,
   ListboxOption,
   ListboxOptions,
 } from '@headlessui/react';
 import { useState } from 'react';
+import { XMarkIcon } from '@heroicons/react/20/solid';
 
 interface FilterBarProps {
   filters: Filters;
@@ -18,51 +19,37 @@ interface FilterBarProps {
 }
 
 export default function FilterBar({ filters, genre, status }: FilterBarProps) {
-  const { updateParam } = useUrlParams();
-
-  const [selectedGenres, setSelectedGenres] = useState(
-    Array.isArray(genre) ? genre : [genre]
-  );
+  const { updateArrayParam, deleteParam } = useUrlParams();
+  const selectedGenres = Array.isArray(genre) ? genre : [genre].filter(Boolean);
 
   return (
     <>
-      <Menu>
-        <MenuButton>
-          Genre: {filters.genres.find((name) => name === genre) || 'Any'}
-        </MenuButton>
-        <MenuItems anchor='bottom' modal={false}>
-          {filters.genres.map((name) => {
-            return (
-              <MenuItem key={name}>
-                <button
-                  className='block'
-                  onClick={() => updateParam('genre', name)}
-                >
-                  {name}
-                </button>
-              </MenuItem>
-            );
-          })}
-        </MenuItems>
-      </Menu>
-      {/* <Listbox
-        value={Array.isArray(genre) ? genre : [genre || '']}
-        onChange={(item: string) => updateParam('genre', item)}
+      <Listbox
+        value={selectedGenres}
+        onChange={(selected) => updateArrayParam('genre', selected)}
         multiple
       >
-        <ListboxButton>{selectedGenres}</ListboxButton>
-        <ListboxOptions anchor='bottom'>
-          {filters.genres.map((name) => (
+        <ListboxButton>
+          Genres:{' '}
+          {selectedGenres.length === 0 ? 'All' : selectedGenres.join(', ')}
+        </ListboxButton>
+        {selectedGenres.length > 0 && (
+          <Button onClick={() => deleteParam('genre')}>
+            <XMarkIcon className="h-4 w-4" />
+          </Button>
+        )}
+        <ListboxOptions anchor="bottom" modal={false}>
+          {filters.genres.map((item) => (
             <ListboxOption
-              key={name}
-              value={name}
-              className='data-focus:bg-blue-100'
+              key={item}
+              value={item}
+              className="data-focus:bg-blue-100"
             >
-              {name}
+              {item}
             </ListboxOption>
           ))}
         </ListboxOptions>
-      </Listbox> */}
+      </Listbox>
     </>
   );
 }

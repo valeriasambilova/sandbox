@@ -14,7 +14,7 @@ export default function Card({ item }) {
   };
 
   return (
-    <div className="flex overflow-hidden rounded-lg bg-neutral-300 px-4 py-6 dark:bg-neutral-800">
+    <div className="flex rounded-lg bg-neutral-300 px-4 py-6 dark:bg-neutral-800">
       <div className="card-image max-h-65 max-w-45 shrink-0 overflow-hidden rounded-lg">
         <img
           className="aspect-9/13 h-full w-full object-cover"
@@ -23,10 +23,10 @@ export default function Card({ item }) {
           loading="lazy"
         />
       </div>
-      <div className="card-info flex flex-col pl-4">
+      <div className="card-info flex flex-col pl-4 lg:max-h-65">
         <div>
           {/* title */}
-          <div className="text-m mb-2">
+          <div className="text-m mb-3">
             <div className="text-base">{englishTitle || romajiTitle}</div>
             {showRomaji && (
               <div className="text-xs text-neutral-500">{romajiTitle}</div>
@@ -34,7 +34,7 @@ export default function Card({ item }) {
           </div>
           {/* genres */}
           <div
-            className={`mb-2 text-xs text-neutral-400 ${
+            className={`mb-3 text-xs text-neutral-400 ${
               !!genresLength(item.genres) ? 'visible' : ''
             }`}
           >
@@ -47,9 +47,9 @@ export default function Card({ item }) {
           </div>
         </div>
         {/* description */}
-        <div className="h-full">
+        <div className="overflow-hidden leading-snug">
           <p
-            className="scrollbar leading-tight text-neutral-300 hover:h-full lg:line-clamp-7 lg:hover:overflow-y-auto lg:hover:pr-1"
+            className="scrollbar h-full text-neutral-300 lg:not-[&:hover]:line-clamp-5 lg:hover:overflow-y-auto lg:hover:pr-1"
             dangerouslySetInnerHTML={{
               __html: DOMPurify.sanitize(item.description),
             }}
